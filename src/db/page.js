@@ -1,5 +1,6 @@
 const {pool} = require('./db')
 const sectionDB = require('./section')
+const userDB = require('./user')
 
 module.exports = {
     getPageById: async (id) => {
@@ -11,6 +12,8 @@ module.exports = {
 
         page = page[0]
         page.sections = await sectionDB.getSectionsByPage(page.id)
+        page.sharedUsers = await userDB.getSharedUserByPage(page.id)
+
         return page
     },
     
@@ -47,10 +50,10 @@ module.exports = {
         return result.affectedRows == 1
     },
 
-    addPage: async (title, description, idUser) => {
+    addPage: async (title, description, idUser, private) => {
         let [result, ] = await pool.query(`
-                INSERT INTO page(id, title, description, idUser) 
-                VALUES (NULL, '${title}', '${description}', '${idUser}');
+                INSERT INTO page(id, title, description, idUser, private) 
+                VALUES (NULL, '${title}', '${description}', '${idUser}', ${private});
 
                 SELECT * FROM page 
                 WHERE id=LAST_INSERT_ID() ;
@@ -60,12 +63,13 @@ module.exports = {
         return {...result};
     },
 
-    updatepage: async (id, title, description) => {
+    updatepage: async (id, title, description, private) => {
         let [result, ] = await pool.query(`
                 UPDATE page
                 SET
                     title='${title}',
-                    description='${description}'
+                    description='${description}',
+                    private=${private}
                 WHERE id=${id}
         `)
 

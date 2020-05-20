@@ -24,18 +24,18 @@ router.delete('/pages/:id', auth, runAsyncWrapper(async (req, res) => {
 }))
 
 router.post('/pages', auth, runAsyncWrapper(async (req, res) => {
-    let { title, description } = req.body.page
+    let { title, description, private } = req.body.page
 
-    let result = await pageDB.addPage(title, description, req.user.id);
+    let result = await pageDB.addPage(title, description, req.user.id, private);
     res.send({ page: result})
 }))
 
 router.patch('/pages', auth, runAsyncWrapper(async (req, res) => {
-    let {id, title, description} = req.body.page
+    let {id, title, description, private} = req.body.page
     // if (!id || !title || !description)
         // throw new Error('Please provide id, title, description')
 
-    let result = await pageDB.updatepage(id, title, description)
+    let result = await pageDB.updatepage(id, title, description, private)
     res.send({update: result})
 }))
 

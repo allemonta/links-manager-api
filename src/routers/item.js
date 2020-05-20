@@ -24,6 +24,12 @@ router.post('/items', auth, runAsyncWrapper(async (req, res) => {
     res.send({item: result})
 }))
 
+router.post('/itemsPosition', auth, runAsyncWrapper(async (req, res) => {
+    let { itemsPosition } = req.body
+    let result = await itemDB.updateItemPositions(itemsPosition)
+    res.send({result: result})
+}))
+
 router.delete('/items/:id', runAsyncWrapper(async (req, res) => {
     let id = req.params.id
     if (!id)
@@ -31,16 +37,14 @@ router.delete('/items/:id', runAsyncWrapper(async (req, res) => {
 
     /* TODO check user scope */
     let result = await itemDB.deleteItem(id)
-    res.send(result)
+    res.send({deleted: result})
 }))
 
 router.patch('/items', async (req, res) => {
     let { id, title, path, visible, nested } = req.body.item
-    if (!id || !title || !path)
-        throw new Error('Please provide an item')
 
     let result = await itemDB.updateItem(id, path, title, visible, nested)
-    res.send(result)
+    res.send({update: result})
 })
 
 module.exports = router

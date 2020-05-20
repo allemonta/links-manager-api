@@ -23,6 +23,7 @@ module.exports = {
             SELECT *
             FROM item 
             WHERE idSection=${idSection} 
+            ORDER BY position
         `)
         return result
     },
@@ -48,6 +49,11 @@ module.exports = {
                 WHERE id=LAST_INSERT_ID() 
         `)
         result = result[1]['0']
+        await pool.query(`
+                UPDATE item
+                SET position = ${result.id}
+                WHERE id=${result.id};
+        `)
 
         return {...result};
     },
@@ -74,5 +80,24 @@ module.exports = {
         
 
         return result.affectedRows == 1;
+    },
+
+    updateItemPositions: async (itemsPosition) => {
+        let s = ''
+        for (item of itemsPosition) {
+            s += `
+                UPDATE item
+                SET position = ${item.position}
+                WHERE id=${item.id};
+            `
+        }
+
+        let [result, ] = await pool.query(s)
+
+        let sum = 0
+        for (let e of result)
+            sum += e.affectedRows
+
+        return sum == itemsPosition.length;
     },
 }

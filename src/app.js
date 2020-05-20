@@ -11,6 +11,7 @@ const googleRouter = require('./routers/google')
 const itemRouter = require('./routers/item')
 const pageRouter = require('./routers/page')
 const routerRouter = require('./routers/section')
+const sharedPageRouter = require('./routers/sharedPage')
 
 const app = express()
 const port = process.env.LINKS_MANAGER_API_PORT || 3001
@@ -23,6 +24,7 @@ app.use(googleRouter)
 app.use(itemRouter)
 app.use(pageRouter)
 app.use(routerRouter)
+app.use(sharedPageRouter)
 
 app.get('*', (req, res) => {
     res.send({

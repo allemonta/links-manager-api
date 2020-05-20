@@ -48,4 +48,14 @@ module.exports = {
 
         return result.affectedRows == 1
     },
+
+    getSharedUserByPage: async (idPage) => {
+        let [users, ] = await pool.query(`
+            SELECT u.name, u.surname, u.email, u.picturePath
+            FROM users u, sharedPage sp
+            WHERE sp.idPage = ${idPage}
+                AND u.id = sp.idUser
+        `)
+        return users
+    }
 }
